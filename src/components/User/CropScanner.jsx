@@ -353,7 +353,7 @@ const CropScanner = ({ farms = [], onDigitizeNew, onScanQueued }) => {
       const response = await api.post("/api/scan/submit/", formData);
       
       if (onScanQueued && response.data.job_id) {
-        onScanQueued(response.data.job_id, selectedFallbackFarm || "");
+        onScanQueued(response.data.job_id, "");
         // Reset the UI immediately so the user can scan another crop if needed
         resetScanner();
       } else {
@@ -445,15 +445,12 @@ const CropScanner = ({ farms = [], onDigitizeNew, onScanQueued }) => {
 
   return (
     <div
-      className={`relative w-full mx-auto z-10 transition-all duration-500 ease-in-out ${containerWidthClass}`}
+      className={`relative w-full mx-auto z-10 transition-all duration-500 ease-in-out ${containerWidthClass} poppins-regular`}
     >
-      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[100px] rounded-full pointer-events-none z-0" />
-      <div className="absolute bottom-[-10%] right-[-2%] w-[60%] h-[60%] bg-secondary/15 blur-[100px] rounded-full pointer-events-none z-0" />
-
-      <div className="bg-base-100/70 backdrop-blur-xl border border-base-content/10 shadow-xl rounded-2xl overflow-hidden relative z-10">
+      <div className="w-full relative z-10 flex flex-col gap-6">
         {/* Alerts & Headers */}
         {outboxCount > 0 && (
-          <div className="bg-warning/10 border-b border-warning/20 text-warning px-6 py-4 flex justify-between items-center backdrop-blur-md">
+          <div className="alert alert-warning shadow-sm rounded-box backdrop-blur-md flex justify-between items-center mt-4">
             <span className="font-semibold flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -484,22 +481,22 @@ const CropScanner = ({ farms = [], onDigitizeNew, onScanQueued }) => {
         )}
 
         {!isStorageSupported && !isDeviceOnline && (
-          <div className="bg-error/10 border-b border-error/20 text-error px-6 py-4 text-center font-semibold">
+          <div className="alert alert-error shadow-sm rounded-box text-center font-semibold mt-4">
             {t('CropScanner.offline_mode_unavailable')}
           </div>
         )}
 
-        <div className="p-6 md:px-8 border-b border-base-content/10 bg-base-200/50 flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h2 className="text-xl md:text-2xl font-black text-base-content tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-base-content poppins-semibold">
               {t('CropScanner.title')}
-            </h2>
-            <p className="text-sm text-base-content/60 font-medium mt-1">
+            </h1>
+            <p className="text-base-content/70 mt-2 text-sm md:text-base">
               {t('CropScanner.subtitle')}
             </p>
           </div>
           <div
-            className={`flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-md border ${isDeviceOnline ? "bg-success/10 text-success border-success/20" : "bg-error/10 text-error border-error/20"}`}
+            className={`flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full border ${isDeviceOnline ? "bg-success/5 text-success border-success/10" : "bg-error/5 text-error border-error/10"}`}
           >
             <span
               className={`w-2 h-2 rounded-full ${isDeviceOnline ? "bg-success" : "bg-error animate-pulse"}`}
@@ -508,7 +505,7 @@ const CropScanner = ({ farms = [], onDigitizeNew, onScanQueued }) => {
           </div>
         </div>
 
-        <div className="p-6 md:p-8 flex flex-col items-center">
+        <div className="flex flex-col items-center mt-4">
           <input
             type="file"
             accept="image/*"
@@ -528,10 +525,10 @@ const CropScanner = ({ farms = [], onDigitizeNew, onScanQueued }) => {
                 exit="exit"
                 onClick={handleCameraClick}
                 disabled={outboxCount > 0}
-                className={`w-full max-w-md aspect-[4/3] rounded-2xl bg-base-200/50 border-2 border-dashed flex flex-col items-center justify-center transition-all ${outboxCount > 0 ? "border-error/30 text-error/60 cursor-not-allowed opacity-50" : "border-base-content/20 text-base-content/60 hover:text-primary hover:border-primary/50 hover:bg-primary/5 cursor-pointer group"}`}
+                className={`w-full max-w-md aspect-[4/3] rounded-2xl bg-base-200/30 border border-base-content/10 flex flex-col items-center justify-center transition-all ${outboxCount > 0 ? "border-error/30 text-error/60 cursor-not-allowed opacity-50" : "text-base-content/60 hover:shadow-md hover:bg-base-100 cursor-pointer group"}`}
               >
                 <div
-                  className={`p-5 bg-base-100 rounded-2xl shadow-sm border border-base-content/5 mb-4 ${outboxCount === 0 && "group-hover:scale-110 transition-transform"}`}
+                  className={`p-4 rounded-full bg-base-100 shadow-sm border border-base-content/5 mb-4 ${outboxCount === 0 && "group-hover:scale-105 transition-transform"}`}
                 >
                   {outboxCount > 0 ? (
                     <svg
@@ -571,7 +568,7 @@ const CropScanner = ({ farms = [], onDigitizeNew, onScanQueued }) => {
                     </svg>
                   )}
                 </div>
-                <span className="font-bold text-lg tracking-wide">
+                <span className="poppins-medium text-base text-base-content/80">
                   {outboxCount > 0
                     ? t('CropScanner.sync_required_to_scan')
                     : t('CropScanner.initialize_camera')}
@@ -586,25 +583,16 @@ const CropScanner = ({ farms = [], onDigitizeNew, onScanQueued }) => {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                className="relative w-full max-w-md aspect-[4/3] rounded-2xl overflow-hidden border border-base-content/10 shadow-inner"
+                className="relative w-full max-w-md aspect-[4/3] rounded-2xl overflow-hidden border border-base-content/10 bg-base-200/50"
               >
                 <img
                   src={previewUrl}
                   alt={t('CropScanner.crop_scan_alt')}
-                  className="w-full h-full object-cover brightness-50 blur-sm transition-all"
+                  className="w-full h-full object-cover opacity-60 transition-all"
                 />
-                <motion.div
-                  className="absolute left-0 right-0 h-1 bg-primary shadow-[0_0_15px_3px_rgba(var(--p),0.8)]"
-                  animate={{ top: ["0%", "100%", "0%"] }}
-                  transition={{
-                    duration: 2.0,
-                    ease: "linear",
-                    repeat: Infinity,
-                  }}
-                />
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                  <span className="loading loading-spinner loading-lg text-primary"></span>
-                  <span className="px-5 py-2.5 bg-base-100 text-primary font-bold text-sm rounded-xl shadow-2xl border border-base-content/10">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <span className="loading loading-spinner loading-md text-primary"></span>
+                  <span className="px-4 py-2 bg-base-100/90 text-base-content font-medium text-sm rounded-full shadow-sm border border-base-content/10">
                     {isDeviceOnline
                       ? t('CropScanner.ai_analyzing')
                       : t('CropScanner.queueing_offline')}

@@ -194,7 +194,7 @@ export default function Home() {
           >
             <button
               onClick={() => navigate("/pest-prediction")}
-              className="btn btn-primary w-full md:w-auto md:px-8 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform rounded-xl"
+              className="btn btn-primary w-full md:w-auto md:px-8 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"
             >
               <Scan size={18} className="mr-2 md:w-5 md:h-5" /> {t("home.start_pest_detection", "Start Pest Detection")}
             </button>

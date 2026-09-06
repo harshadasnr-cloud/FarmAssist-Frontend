@@ -11,6 +11,7 @@ const RootLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const eventSourceRef = useRef(null);
+  const processedJobsRef = useRef(new Set());
 
   // Helper to colorize the active tab icon
   const isActive = (path) =>
@@ -30,31 +31,35 @@ const RootLayout = () => {
     if (!token) return;
 
     // Connect to SSE
-    eventSourceRef.current = new EventSource(`http://localhost:8000/api/stream/?token=${token}`);
+    const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    eventSourceRef.current = new EventSource(`${baseURL}/api/stream/?token=${token}`);
 
     eventSourceRef.current.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         if (data.type === "job_completed" || data.type === "job_failed") {
-          // Fire theme-aware Toast with high z-index
-          Toast.fire({
-            toast: true,
-            position: 'bottom-end',
-            icon: data.type === 'job_completed' ? 'success' : 'error',
-            title: data.type === 'job_completed' ? 'Scan Completed!' : 'Scan Failed',
-            text: `Result for ${data.crop}`,
-            showConfirmButton: data.type === 'job_completed',
-            confirmButtonText: 'View Details',
-            timer: 4000,
-            timerProgressBar: true,
-            customClass: {
-              container: 'z-[99999]' // Ensure toast is above the queue
-            }
-          }).then((result) => {
-            if (result.isConfirmed && data.type === 'job_completed') {
-              navigate(`/pest-history/${data.job_id}`);
-            }
-          });
+          if (!processedJobsRef.current.has(data.job_id)) {
+            processedJobsRef.current.add(data.job_id);
+            // Fire theme-aware Toast with high z-index
+            Toast.fire({
+              toast: true,
+              position: 'bottom-end',
+              icon: data.type === 'job_completed' ? 'success' : 'error',
+              title: data.type === 'job_completed' ? 'Scan Completed!' : 'Scan Failed',
+              text: `Result for ${data.crop}`,
+              showConfirmButton: data.type === 'job_completed',
+              confirmButtonText: 'View Details',
+              timer: 4000,
+              timerProgressBar: true,
+              customClass: {
+                container: 'z-[99999]' // Ensure toast is above the queue
+              }
+            }).then((result) => {
+              if (result.isConfirmed && data.type === 'job_completed') {
+                navigate(`/pest-history/${data.job_id}`);
+              }
+            });
+          }
         }
         
         // Dispatch custom event for ScanJobQueue to clear jobs and Navbar/AlertInbox to update

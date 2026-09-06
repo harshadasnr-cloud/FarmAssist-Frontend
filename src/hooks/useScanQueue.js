@@ -34,19 +34,54 @@ export function useScanQueue() {
     persistJobs(jobs);
   }, [jobs]);
 
-  // Fetch historical jobs from backend on mount to populate queue
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const { data } = await api.get('/api/scan/jobs/');
-        const activeJobs = data.filter(j => j.status === 'PENDING' || j.status === 'PROCESSING');
-        setJobs(activeJobs);
-      } catch (err) {
-        console.warn("Could not fetch scan history:", err?.message);
-      }
-    };
-    fetchHistory();
+  // Fetch historical jobs from backend to populate queue
+  const fetchHistory = useCallback(async () => {
+    try {
+      const { data } = await api.get('/api/scan/jobs/');
+      setJobs(prev => {
+        const newJobs = [];
+        const serverJobsMap = new Map(data.map(j => [Number(j.id), j]));
+
+        // Add jobs from prev that are still pending/processing on server
+        prev.forEach(localJob => {
+          const serverJob = serverJobsMap.get(Number(localJob.id));
+          if (serverJob) {
+             if (serverJob.status === 'PENDING' || serverJob.status === 'PROCESSING') {
+               newJobs.push({ ...localJob, ...serverJob });
+             }
+          }
+        });
+
+        // Add any new pending/processing jobs from server that weren't in prev
+        data.forEach(serverJob => {
+          if (serverJob.status === 'PENDING' || serverJob.status === 'PROCESSING') {
+            if (!newJobs.find(j => Number(j.id) === Number(serverJob.id))) {
+              newJobs.push(serverJob);
+            }
+          }
+        });
+
+        return newJobs;
+      });
+    } catch (err) {
+      console.warn("Could not fetch scan history:", err?.message);
+    }
   }, []);
+
+  // Fetch on mount
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  // Polling fallback: if there are any pending jobs, poll every 5 seconds
+  // in case the SSE event is missed.
+  useEffect(() => {
+    const hasPending = jobs.some(j => j.status === 'PENDING' || j.status === 'PROCESSING');
+    if (!hasPending) return;
+
+    const intervalId = setInterval(fetchHistory, 5000);
+    return () => clearInterval(intervalId);
+  }, [jobs, fetchHistory]);
 
   /**
    * addJob — called immediately after POST /api/scan/submit/ returns

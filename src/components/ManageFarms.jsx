@@ -39,7 +39,7 @@ const ManageFarms = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-base-200">
+    <div className="min-h-screen w-full bg-base-200 poppins-regular">
       {/* =====================================================
           MOBILE HEADER
           Only page-level header on mobile
@@ -63,7 +63,7 @@ const ManageFarms = () => {
             )}
 
             <div className="min-w-0">
-              <h1 className="font-black text-base leading-none truncate">
+              <h1 className="text-lg leading-none truncate poppins-semibold">
                 {isAddingFarm ? t("manageFarms.add_farm_title", "Add Farm") : t("manageFarms.my_farms_title", "My Farms")}
               </h1>
 
@@ -99,7 +99,7 @@ const ManageFarms = () => {
               {t("manageFarms.page_heading", "Farm Management")}
             </p>
 
-            <h1 className="text-3xl font-black text-base-content mt-1">
+            <h1 className="text-3xl md:text-4xl text-base-content mt-1 poppins-semibold">
               {t("manageFarms.my_farms_title", "My Farms")}
             </h1>
           </div> 
@@ -192,7 +192,7 @@ const ManageFarms = () => {
                   {t("manageFarms.new_property", "New Property")}
                 </p>
 
-                <h2 className="text-2xl font-black mt-1">
+                <h2 className="text-2xl mt-1 poppins-semibold">
                   {t("manageFarms.define_boundary_title", "Define Farm Boundary")}
                 </h2>
               </div>

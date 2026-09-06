@@ -6,7 +6,7 @@
  * - Listens to the "scanJobUpdate" custom event dispatched by RootLayout SSE
  *   and appends new notifications in real time (no polling).
  * - Exposes unreadCount, notifications, alerts, and control functions.
- * - AlertInbox and Navbar both consume this context — NO independent fetching.
+ * - AlertInbox and Navbar both consume this context â€” NO independent fetching.
  */
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import api from "../axios";

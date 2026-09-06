@@ -78,19 +78,12 @@ const FarmCard = ({ farm, onSelect }) => {
           group
           w-full
           text-left
-          bg-base-100
-          rounded-2xl
-          border
-          border-base-content/10
+          bg-transparent
           overflow-hidden
-          shadow-sm
           active:scale-[0.985]
           transition-transform
           duration-150
-
-          md:hover:shadow-xl
           md:hover:-translate-y-0.5
-          md:rounded-3xl
         "
       >
         {/* =================================================
@@ -105,6 +98,7 @@ const FarmCard = ({ farm, onSelect }) => {
           w-full
           bg-base-300
           overflow-hidden
+          rounded-2xl
         "
         >
           <GoogleMap
@@ -206,8 +200,8 @@ const FarmCard = ({ farm, onSelect }) => {
             <div className="min-w-0">
               <h2
                 className="
-                font-black
-                text-[17px]
+                poppins-semibold
+                text-lg
                 md:text-xl
                 text-base-content
                 leading-tight
@@ -499,7 +493,7 @@ const MyFarmsDashboard = ({onAddFarm}) => {
         {/* GRID VIEW */}
         <div className="px-4 md:px-8 relative z-10">
           {farms.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-base-200/50 rounded-3xl border-2 border-dashed border-base-content/10">
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
               <div className="w-16 h-16 bg-base-100 rounded-2xl shadow-sm flex items-center justify-center mb-4 text-base-content/40">
                 <Map size={32} />
               </div>
