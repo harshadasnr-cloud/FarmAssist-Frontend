@@ -39,7 +39,11 @@ const ManageFarms = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-base-200 poppins-regular">
+    <div className="min-h-screen w-full bg-base-200 poppins-regular relative overflow-hidden">
+      {/* THEME-AWARE AMBIENT LIGHTING */}
+      <div className="absolute top-[-20%] left-[-20%] w-[50vw] h-[50vh] bg-primary/10 blur-[200px] rounded-full pointer-events-none z-0" />
+      <div className="absolute bottom-[-10%] right-[-20%] w-[40vw] h-[60vh] bg-secondary/10 blur-[200px] rounded-full pointer-events-none z-0" />
+
       {/* =====================================================
           MOBILE HEADER
           Only page-level header on mobile

@@ -16,6 +16,9 @@ import {
   Maximize,
   Minimize,
   Lock,
+  Lightbulb,
+  TrendingUp,
+  Info,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -46,6 +49,52 @@ export default function Home() {
   });
 
   const today = todayFormatter.format(new Date());
+
+  const dynamicUpdates = [
+    {
+      id: 1,
+      type: t("home.update_market", "Market Live"),
+      title: t("home.market_title", "Wheat (Lokwan) in Pune Mandi"),
+      value: "₹2,450/Qtl",
+      icon: <TrendingUp size={20} />,
+      colorClass: "text-success bg-success/20",
+    },
+    {
+      id: 2,
+      type: t("home.update_weather", "Weather Alert"),
+      title: t("home.weather_title", "Expected light showers this evening"),
+      value: "70% Chance",
+      icon: <CloudRain size={20} />,
+      colorClass: "text-info bg-info/20",
+    },
+    {
+      id: 3,
+      type: t("home.update_news", "Agri News"),
+      title: t("home.news_title", "New subsidy for drip irrigation"),
+      value: "Apply by Oct 15",
+      icon: <Info size={20} />,
+      colorClass: "text-primary bg-primary/20",
+    },
+    {
+      id: 4,
+      type: t("home.update_insight", "Daily Insight"),
+      title: t("home.insight_title", "Soil moisture is dropping fast"),
+      value: "Irrigate soon",
+      icon: <Droplets size={20} />,
+      colorClass: "text-warning bg-warning/20",
+    }
+  ];
+
+  const [activeUpdateIndex, setActiveUpdateIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      setActiveUpdateIndex((prev) => (prev + 1) % dynamicUpdates.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isHovered]);
 
   // State for Full-Screen Feed
   const [isFullscreen, setIsFullscreen] = useState(() => {
@@ -184,20 +233,50 @@ export default function Home() {
             </h1>
           </motion.div>
 
-          {/* Primary Action - Full width on mobile, auto width on desktop */}
+          {/* Dynamic Live Card */}
           <motion.div
             initial="hidden"
             animate="visible"
             variants={fadeIn}
             transition={{ delay: 0.1 }}
-            className="w-full md:w-auto mt-2 md:mt-0"
+            className="w-full md:w-[45%] lg:w-[40%] xl:w-[35%] mt-4 md:mt-0"
           >
-            <button
-              onClick={() => navigate("/pest-prediction")}
-              className="btn btn-primary w-full md:w-auto md:px-8 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"
+            <div 
+              className="relative rounded-2xl border border-none shadow-none overflow-hidden h-[75px] md:h-[85px]"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
             >
-              <Scan size={18} className="mr-2 md:w-5 md:h-5" /> {t("home.start_pest_detection", "Start Pest Detection")}
-            </button>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeUpdateIndex}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute inset-0 flex items-center gap-3 md:gap-4 px-4 py-2"
+                >
+                  <div className={`p-2.5 rounded-xl shrink-0 ${dynamicUpdates[activeUpdateIndex].colorClass}`}>
+                    {dynamicUpdates[activeUpdateIndex].icon}
+                  </div>
+                  <div className="flex flex-col flex-1 min-w-0 justify-center">
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-base-content/50 poppins-semibold flex items-center justify-between">
+                      {dynamicUpdates[activeUpdateIndex].type}
+                      <span className="text-primary text-[9px] lowercase flex items-center gap-1 animate-pulse">
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full"></span> live
+                      </span>
+                    </span>
+                    <div className="flex justify-between items-baseline gap-2 mt-0.5">
+                      <p className="text-xs md:text-sm font-medium text-base-content truncate poppins-regular flex-1">
+                        {dynamicUpdates[activeUpdateIndex].title}
+                      </p>
+                      <span className="text-xs font-bold whitespace-nowrap poppins-semibold">
+                        {dynamicUpdates[activeUpdateIndex].value}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </motion.div>
         </div>
       </header>
@@ -270,34 +349,44 @@ export default function Home() {
                 {t("home.quick_actions", "Quick Actions")}
               </h3>
 
-              <div className="grid grid-cols-2 xl:grid-cols-1 gap-3 md:gap-4">
+              <div className="grid grid-cols-3 xl:grid-cols-1 gap-2 md:gap-4">
                 <button
                   onClick={() => navigate("/crop-recommendations")}
-                  className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-0 bg-base-100 md:bg-transparent py-4 px-2 md:py-5 md:px-6 rounded-2xl md:rounded-xl border border-base-content/5 md:border-base-content/10 hover:bg-base-200 transition-colors group"
+                  className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-0 bg-transparent py-3 px-1 md:py-4 md:px-4 rounded-2xl md:rounded-xl hover:bg-base-200/50 transition-colors group border border-base-content/5"
                 >
-                  <div className="p-2.5 md:p-2 bg-primary/10 text-primary rounded-xl md:rounded-lg md:mr-2 group-hover:scale-110 transition-transform">
+                  <div className="p-2.5 md:p-2 bg-primary/10 text-primary rounded-xl md:rounded-lg md:mr-3 group-hover:scale-110 transition-transform">
                     <Activity size={20} className="md:w-5 md:h-5" />
                   </div>
-                  <span className="text-[11px] md:text-base font-bold md:font-medium text-center">
+                  <span className="text-[10px] md:text-base poppins-medium text-center">
                     {t("home.crop_engine", "Crop Engine")}
                   </span>
                 </button>
-
+                <button
+                  onClick={() => navigate("/pest-prediction")}
+                  className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-0 bg-base-100 md:bg-transparent py-4 px-2 md:py-5 md:px-6 rounded-2xl md:rounded-xl border border-base-content/5 md:border-base-content/10 hover:bg-base-200 transition-colors group"
+                >
+                  <div className="p-2.5 md:p-2 bg-error/10 text-error rounded-xl md:rounded-lg md:mr-2 group-hover:scale-110 transition-transform">
+                    <Scan size={20} className="md:w-5 md:h-5" />
+                  </div>
+                  <span className="text-[11px] md:text-base font-bold md:font-medium text-center">
+                    {t("home.start_pest_detection", "Pest Scanner")}
+                  </span>
+                </button>
                 <button
                   onClick={() =>
                     navigate(isAuthenticated ? "/my-farms" : "/login")
                   }
-                  className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-0 bg-base-100 md:bg-transparent py-4 px-2 md:py-5 md:px-6 rounded-2xl md:rounded-xl border border-base-content/5 md:border-base-content/10 hover:bg-base-200 transition-colors group"
+                  className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-0 bg-transparent py-3 px-1 md:py-4 md:px-4 rounded-2xl md:rounded-xl hover:bg-base-200/50 transition-colors group border border-base-content/5"
                 >
-                  <div className="p-2.5 md:p-2 bg-secondary/10 text-secondary rounded-xl md:rounded-lg md:mr-2 group-hover:scale-110 transition-transform">
+                  <div className="p-2.5 md:p-2 bg-secondary/10 text-secondary rounded-xl md:rounded-lg md:mr-3 group-hover:scale-110 transition-transform">
                     {isAuthenticated ? (
                       <Layers size={20} className="md:w-5 md:h-5" />
                     ) : (
                       <Lock size={20} className="md:w-5 md:h-5" />
                     )}
                   </div>
-                  <span className="text-[11px] md:text-base font-bold md:font-medium text-center leading-tight">
-                    {isAuthenticated ? t("home.my_land_data", "My Land Data") : t("home.login_to_manage", "Login to Manage")}
+                  <span className="text-[10px] md:text-base poppins-medium text-center leading-tight">
+                    {isAuthenticated ? t("home.my_land_data", "Land Data") : t("home.login_to_manage", "Login")}
                   </span>
                 </button>
               </div>

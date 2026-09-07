@@ -447,6 +447,9 @@ const CropScanner = ({ farms = [], onDigitizeNew, onScanQueued }) => {
     <div
       className={`relative w-full mx-auto z-10 transition-all duration-500 ease-in-out ${containerWidthClass} poppins-regular`}
     >
+      <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-primary/5 blur-[150px] rounded-full pointer-events-none z-0" />
+      <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-secondary/5 blur-[150px] rounded-full pointer-events-none z-0" />
+
       <div className="w-full relative z-10 flex flex-col gap-6">
         {/* Alerts & Headers */}
         {outboxCount > 0 && (
